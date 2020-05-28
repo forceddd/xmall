@@ -66,7 +66,7 @@
               >
                 <router-link to="/cart"></router-link>
                 <span class="cart-num">
-                  <i class="num" :class="{no:0 == 0}">{{}}</i>
+                  <i class="num" :class="{no:totalCount == 0}">{{totalCount}}</i>
                 </span>
 
                 <!-- 购物车显示 -->
@@ -80,7 +80,7 @@
                               <div class="cart-item-inner">
                                 <a>
                                   <div class="item-thumb">
-                                    <img :src="goods.productImageBig" />
+                                    <img v-lazy="goods.productImageBig" />
                                   </div>
                                   <div class="item-desc">
                                     <div class="cart-cell">
@@ -98,7 +98,7 @@
                                     </div>
                                   </div>
                                 </a>
-                                <div class="del-btn del">X</div>
+                                <div class="del-btn del" @click="delGoods(goods.productId)">X</div>
                                 <!-- <el-button type="danger" icon="el-icon-delete" circle></el-button> -->
                               </div>
                             </div>
@@ -121,7 +121,11 @@
                         </h6>
                       </div>
                     </div>
-                    <div style="height: 313px;text-align: center" class="cart-con" v-if="!cartList">
+                    <div
+                      style="height: 313px;text-align: center"
+                      class="cart-con"
+                      v-if="!cartList.length"
+                    >
                       <p>您的购物车竟然是空的!</p>
                     </div>
                   </div>
@@ -172,7 +176,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["SHOWCART"]),
+    ...mapMutations(["SHOWCART", "ISLOGIN", "GETSTATE", "ADDCART"]),
     cartShowState(isShow) {
       //不涉及异步操作 直接可以在mutation中操作
       // this.$store.commit("cartShowState", isShow);
@@ -182,16 +186,32 @@ export default {
       //将token清空
       Storage.set("token", null);
       Storage.set("userInfo", null);
-      Storage.set("cartList", null);
+      Storage.set("cartList", []);
+      Storage.set("id", null);
       //设置vuex中的登陆状态
-      this.$store.commit("ISLOGIN", { info: null, isLogin: false });
-      this.$store.commit("ADDCART", []);
+      this.ISLOGIN({ info: null, isLogin: false });
+      // this.$store.commit("ADDCART", []);
       //跳转到首页
+      this.GETSTATE();
       this.$router.push("/");
+    },
+    async delGoods(productId) {
+      // alert(productId);
+      const res = await this.$axios.post("api/addCart", {
+        userId: Storage.get("id"),
+        productId,
+        productNum: -1
+      });
+      // console.log(res.data.result.cartList);
+
+      //修改vuex中的cartList
+      this.ADDCART(res.data.result.cartList);
     }
   },
 
-  created() {}
+  mounted() {
+    this.GETSTATE();
+  }
 };
 </script>
 

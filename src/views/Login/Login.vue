@@ -71,6 +71,12 @@ export default {
             //数据持久化存储 以便在请求拦截器中添加请求头设置token
             Storage.set("token", token);
             Storage.set("id", id);
+            const result = await this.$axios.post("/api/cartList", {
+              userId: id
+            });
+            Storage.set("cartList", result.data.cartList.cartList);
+            // console.log(result.data.cartList.cartList);
+
             //改变vuex登陆状态
             this.$store.commit("ISLOGIN", { info: res.data, isLogin: true });
             this.$router.push({ path: this.$route.query.next });

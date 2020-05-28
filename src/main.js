@@ -5,6 +5,14 @@ import store from './store'
 import './plugins/element.js'
 import axios from 'axios'
 import Storage from '@/Utils/storage.js'
+import VueLazyLoad from 'vue-lazyload'
+Vue.use(VueLazyLoad)
+Vue.use(VueLazyLoad, {
+  preLoad: 1.3,
+  error: 'static/images/error.png',
+  loading: 'static/images/loag.gif',
+  attempt: 1
+})
 Vue.prototype.$axios = axios
 Vue.config.productionTip = false
 //设置全局路由守卫

@@ -150,26 +150,34 @@ module.exports = {
                 fs.readFile('./db/allGoods.json', (err, data) => {
                     let { result } = JSON.parse(data);
                     if (productId && userId) {
-                        let { cartList } = cartListJSON.result.find(item => item.id == userId)
-                        // 找到对应的商品
+                        let { cartList } = cartListJSON.result.find(item => item.id == userId);
                         let newData = result.data.find(item => item.productId == productId);
                         newData.limitNum = 100;
+                        if (productNum == -1) {
+                            //删除操作
 
-                        let falg = true;
-                        if (cartList && cartList.length) {
-                            cartList.forEach(item => {
+                            //fiter原来的数组不会变化
+                            // cartList = cartList.filter(item => item.productId != productId);
+                            cartList.some((item, index) => {
                                 if (item.productId == productId) {
-                                    if (item.productNum >= 1) {
-                                        falg = false;
-                                        item.productNum += parseInt(productNum);
-                                    }
+                                    cartList.splice(index, 1)
                                 }
-                            })
+                                return item.productId == productId
+                            });
+                            console.log(cartList.length);
+
+                        } else {
+                            // 找到对应的商品
+                            cartList.some(item => {
+                                if (item.productId == productId) {
+                                    item.productNum++;
+                                }
+                                return item.productId == productId
+                            }) ? null : cartList.unshift({ ...newData, productNum: parseInt(productNum) });
+
                         }
-                        if (!cartList.length || falg) {  //购物车为空
-                            newData.productNum = parseInt(productNum)
-                            cartList.push(newData);
-                        }
+
+
 
                         // 序列化
 

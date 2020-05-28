@@ -11,13 +11,13 @@
                 :class="{on:item===big}"
                 @click="handlerClick(item)"
               >
-                <img :src="item" />
+                <img v-lazy="item" />
               </li>
             </ul>
           </div>
           <div class="thumb">
             <div class="big">
-              <img :src="big" />
+              <img v-lazy="big" />
             </div>
           </div>
         </div>
@@ -39,7 +39,7 @@
           <buy-num @updateNum="updateNum"></buy-num>
         </div>
         <div class="buy">
-          <el-button type="primary" @click="addCart()">加入购物车</el-button>
+          <el-button type="primary" @click="addCart(product)">加入购物车</el-button>
           <el-button type="danger">现在购买</el-button>
         </div>
       </div>
@@ -62,6 +62,8 @@
 <script>
 import BuyNum from "@/components/BuyNum";
 import MShelf from "@/components/Shelf";
+import Storage from "@/Utils/storage.js";
+import { mapMutations, mapState } from "vuex";
 export default {
   components: {
     MShelf,
@@ -74,6 +76,9 @@ export default {
       big: "",
       num: 1
     };
+  },
+  computed: {
+    ...mapState(["login"])
   },
   created() {
     this.getGoodsDetail();
@@ -100,7 +105,32 @@ export default {
       this.number = val;
     },
     //加入购物车
-    addCart() {}
+    ...mapMutations(["ADDCART"]),
+    async addCart(goods) {
+      const { productId, salePrice, productImageBig, productName } = goods;
+      console.log(this.login);
+
+      if (this.login) {
+        //用户已登录 将商品添加到用户信息中
+        const res = await this.$axios.post("api/addCart", {
+          userId: Storage.get("id"),
+          productId,
+          productNum: this.number
+        });
+        // console.log(res.data.result.cartList);
+
+        //修改vuex中的cartList
+        this.ADDCART(res.data.result.cartList);
+      } else {
+        //用户未登录 提示用户需要登录
+        confirm("是否前往登陆页面")
+          ? this.$router.push({
+              path: "login",
+              query: { next: this.$route.fullPath }
+            })
+          : null;
+      }
+    }
   }
 };
 </script>

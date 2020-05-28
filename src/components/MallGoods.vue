@@ -4,7 +4,7 @@
       <el-card :body-style="{padding: 0}">
         <div class="good-img">
           <a>
-            <img :src="goods.productImageBig" alt />
+            <img v-lazy="goods.productImageBig" alt />
           </a>
         </div>
         <h6 class="good-title">{{goods.productName}}</h6>
@@ -45,13 +45,12 @@ export default {
     },
     ...mapMutations(["ADDCART"]),
     async addCart(goods) {
-      const { productId, salePrice, picUrl, productName } = goods;
+      const { productId, salePrice, productImageBig, productName } = goods;
       if (this.login) {
         //用户已登录 将商品添加到用户信息中
         const res = await this.$axios.post("api/addCart", {
           userId: Storage.get("id"),
           productId,
-
           productNum: 1
         });
         // console.log(res.data.result.cartList);

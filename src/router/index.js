@@ -1,10 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Index from '@/views/Index'
-import Home from '@/views/Home/Home'
-import Goods from '@/views/Goods/Goods'
-import Thanks from '@/views/Thanks/Thanks'
-import GoodsDetail from '@/views/GoodsDetail/GoodsDetail'
+const Index = () => import('@/views/Index')
+const Home = () => import('@/views/Home/Home')
+const Goods = () => import('@/views/Goods/Goods')
+const Thanks = () => import('@/views/Thanks/Thanks')
+const GoodsDetail = () => import('@/views/GoodsDetail/GoodsDetail')
 Vue.use(VueRouter)
 
 

@@ -4,9 +4,9 @@
     <div class="banner">
       <el-carousel indicator-position="outside" height="480px">
         <el-carousel-item v-for="item in banner" :key="item.id">
-          <img v-if="item.picUrl" :src="item.picUrl" alt class="img1" />
-          <img v-if="item.picUrl2" :src="item.picUrl2" alt class="img2 a" />
-          <img v-if="item.picUrl3" :src="item.picUrl3" alt class="img3 b" />
+          <img v-if="item.picUrl" v-lazy="item.picUrl" alt class="img1" />
+          <img v-if="item.picUrl2" v-lazy="item.picUrl2" alt class="img2 a" />
+          <img v-if="item.picUrl3" v-lazy="item.picUrl3" alt class="img3 b" />
         </el-carousel-item>
       </el-carousel>
     </div>
@@ -17,7 +17,7 @@
         <el-row>
           <el-col :span="8" v-for="o in item.panelContents" :key="o.id" class="content">
             <el-card :body-style="{ padding: '0px' }">
-              <img :src="o.picUrl" class="i" />
+              <img v-lazy="o.picUrl" class="i" />
               <a :href="o.fullUrl" target="_blank" class="cover-link"></a>
             </el-card>
           </el-col>
@@ -36,7 +36,7 @@
           <!-- 具名插槽 -->
           <div slot="content" class="floors">
             <div class="imgbanner" v-for="o in item.panelContents" :key="o.id" v-if="o.type">
-              <img :src="o.picUrl" alt />
+              <img v-lazy="o.picUrl" alt />
             </div>
             <mall-goods v-for="i in item.panelContents" :key="i.id" :goods="i" v-if="!i.type"></mall-goods>
           </div>
