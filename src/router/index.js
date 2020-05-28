@@ -4,6 +4,7 @@ import Index from '@/views/Index'
 import Home from '@/views/Home/Home'
 import Goods from '@/views/Goods/Goods'
 import Thanks from '@/views/Thanks/Thanks'
+import GoodsDetail from '@/views/GoodsDetail/GoodsDetail'
 Vue.use(VueRouter)
 
 
@@ -37,7 +38,7 @@ const routes = [
       {
         path: 'goodsDetail',
         name: 'goodsDetail',
-        component: () => ('@/views/GoodsDetail/GoodsDetail')
+        component: GoodsDetail
       }
     ]
   },
@@ -45,6 +46,15 @@ const routes = [
     path: '/login',
     name: 'login',
     component: () => import('@/views/Login/Login')
+  },
+  {
+    path: '/user',
+    name: 'user',
+    component: () => import('@/views/User/User'),
+    meta: {
+      //需要守卫
+      require: true
+    }
   }
 
 ]

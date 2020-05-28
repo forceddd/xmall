@@ -71,7 +71,7 @@ export default {
         // console.log(banner);
         this.banner = banner.panelContents;
         this.homeList = data.result;
-        console.log(this.banner[0]);
+        // console.log(this.banner[0]);
       }
     } catch (error) {
       console.log(error);

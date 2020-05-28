@@ -9,15 +9,15 @@
                 v-for="(item,i) in small"
                 :key="i"
                 :class="{on:item===big}"
-                @click="handleClick(item)"
+                @click="handlerClick(item)"
               >
-                <img :src="item">
+                <img :src="item" />
               </li>
             </ul>
           </div>
           <div class="thumb">
             <div class="big">
-              <img :src="big">
+              <img :src="big" />
             </div>
           </div>
         </div>
@@ -36,27 +36,25 @@
         </div>
         <div class="num">
           <span class="params-name">数量</span>
-          <buy-num @handleValue="handleVal"></buy-num>
+          <buy-num @updateNum="updateNum"></buy-num>
         </div>
         <div class="buy">
-          <el-button type="primary" @click='addCart()'>加入购物车</el-button>
+          <el-button type="primary" @click="addCart()">加入购物车</el-button>
           <el-button type="danger">现在购买</el-button>
         </div>
       </div>
     </div>
     <!--产品信息-->
     <div class="item-info">
-        <m-shelf title='产品信息'>
-            <div slot='content'>
-                <div v-if='product.detail'>
-                    <div v-html='product.detail'></div>
-                </div>
-                <div class="no-info" v-else>
-                    <img src="/static/images/no-data.png" alt="">
-                    <br>该商品暂无内容数据
-                </div>
-            </div>
-        </m-shelf>
+      <m-shelf :title="product.productName">
+        <div slot="content">
+          <div v-if="product.detail" v-html="product.detail"></div>
+          <div class="no-info" v-else>
+            <img src="../../../public/static/images/no-data.png" alt />
+            <br />该商品暂无详细介绍
+          </div>
+        </div>
+      </m-shelf>
     </div>
   </div>
 </template>
@@ -65,43 +63,44 @@
 import BuyNum from "@/components/BuyNum";
 import MShelf from "@/components/Shelf";
 export default {
+  components: {
+    MShelf,
+    BuyNum
+  },
   data() {
     return {
       product: {},
       small: [],
-      big: ""
+      big: "",
+      num: 1
     };
-  },
-  components: {
-    BuyNum,
-    MShelf
-  },
-  methods: {
-    //   加入购物车的操作
-    addCart(){
-
-    },
-    handleVal(num) {
-        console.log(num);
-    },
-    handleClick(src) {
-      this.big = src;
-    },
-    async getGoodsDetail() {
-      try {
-        const res = await this.$http.get(
-          `/api/goods/productDet?productId=${this.$route.query.productId}`
-        );
-        this.product = res.data;
-        this.small = this.product.productImageSmall;
-        this.big = this.small[0];
-      } catch (error) {
-        console.log(error);
-      }
-    }
   },
   created() {
     this.getGoodsDetail();
+  },
+  methods: {
+    async getGoodsDetail() {
+      try {
+        const res = await this.$axios.get(
+          "/api/goods/productDet?productId=" + this.$route.query.productId
+        );
+        // console.log(res);
+        this.product = res.data;
+        this.small = this.product.productImageSmall;
+        this.big = this.product.productImageBig;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    handlerClick(small) {
+      this.big = small;
+    },
+    updateNum(val) {
+      // console.log(val);
+      this.number = val;
+    },
+    //加入购物车
+    addCart() {}
   }
 };
 </script>

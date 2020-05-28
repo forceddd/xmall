@@ -66,7 +66,7 @@
               >
                 <router-link to="/cart"></router-link>
                 <span class="cart-num">
-                  <i class="num" :class="{no:totalNum == 0}">{{totalNum}}</i>
+                  <i class="num" :class="{no:0 == 0}">{{}}</i>
                 </span>
 
                 <!-- 购物车显示 -->
@@ -90,13 +90,16 @@
                                       <!-- <p class="attrs"><span>白色</span></p> -->
                                       <h6>
                                         <span class="price-icon">¥</span>
-                                        <span class="price-num">{{goods.salePrice}}</span>
+                                        <span
+                                          class="price-num"
+                                        >{{Number(goods.salePrice).toFixed(2)}}</span>
                                         <span class="item-num">x {{goods.productNum}}</span>
                                       </h6>
                                     </div>
                                   </div>
                                 </a>
-                                <div class="del-btn del">删除</div>
+                                <div class="del-btn del">X</div>
+                                <!-- <el-button type="danger" icon="el-icon-delete" circle></el-button> -->
                               </div>
                             </div>
                           </li>
@@ -106,19 +109,19 @@
                       <div class="nav-cart-total">
                         <p>
                           共
-                          <strong>{{totalNum}}</strong> 件商品
+                          <strong>{{totalCount}}</strong> 件商品
                         </p>
                         <h5>
                           合计：
                           <span class="price-icon">¥</span>
-                          <span class="price-num">{{totalPrice}}</span>
+                          <span class="price-num">{{totalPrice.toFixed(2)}}</span>
                         </h5>
                         <h6>
                           <el-button type="danger">去购物车</el-button>
                         </h6>
                       </div>
                     </div>
-                    <div style="height: 313px;text-align: center" class="cart-con" v-if="!totalNum">
+                    <div style="height: 313px;text-align: center" class="cart-con" v-if="!cartList">
                       <p>您的购物车竟然是空的!</p>
                     </div>
                   </div>
@@ -133,7 +136,7 @@
           <div class="nav-sub-bg"></div>
           <div class="nav-sub-wrapper">
             <div class="w">
-              <el-breadcrumb >
+              <el-breadcrumb>
                 <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
                 <el-breadcrumb-item :to="{path:'/goods'}">全部</el-breadcrumb-item>
                 <el-breadcrumb-item :to="{path:'/goods?cid=1184'}">品牌周边</el-breadcrumb-item>
@@ -148,11 +151,44 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from "vuex";
+import Storage from "@/Utils/storage.js";
 export default {
   data() {
     return {
       productInfo: ""
     };
+  },
+  computed: {
+    ...mapState(["login", "userInfo", "showCart", "cartList"]),
+    totalCount() {
+      return this.cartList.reduce((total, item) => total + item.productNum, 0);
+    },
+    totalPrice() {
+      return this.cartList.reduce(
+        (total, item) => total + item.productNum * item.salePrice,
+        0
+      );
+    }
+  },
+  methods: {
+    ...mapMutations(["SHOWCART"]),
+    cartShowState(isShow) {
+      //不涉及异步操作 直接可以在mutation中操作
+      // this.$store.commit("cartShowState", isShow);
+      this.SHOWCART(isShow);
+    },
+    logout() {
+      //将token清空
+      Storage.set("token", null);
+      Storage.set("userInfo", null);
+      Storage.set("cartList", null);
+      //设置vuex中的登陆状态
+      this.$store.commit("ISLOGIN", { info: null, isLogin: false });
+      this.$store.commit("ADDCART", []);
+      //跳转到首页
+      this.$router.push("/");
+    }
   },
 
   created() {}

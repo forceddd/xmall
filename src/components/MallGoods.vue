@@ -15,7 +15,7 @@
               <el-button type="default" size="medium" @click="productDetail(goods.productId)">查看详情</el-button>
             </a>
             <a href="javascript:;">
-              <el-button type="primary" size="medium" @click="productDetail(goods.productId)">加入购物车</el-button>
+              <el-button type="primary" size="medium" @click="addCart(goods)">加入购物车</el-button>
             </a>
           </div>
           <p>
@@ -28,21 +28,45 @@
   </el-row>
 </template>
 <script>
+import { mapState, mapMutations } from "vuex";
+import Storage from "@/Utils/storage.js";
 export default {
   props: ["goods"],
+  computed: {
+    ...mapState(["login"])
+  },
   methods: {
     productDetail(id) {
       //编程式路由导航
-
-      console.log(this.$router);
-
       this.$router.push({
-        path: `goodsDetail`,
-        query: {
-          productId: id
-        }
+        path: `goodsDetail?productId=${id}`
       });
-      this.$router.push(`/goodsDetail?productId=${id}`);
+      /* this.$router.push(`/goodsDetail?productId=${id}`); */
+    },
+    ...mapMutations(["ADDCART"]),
+    async addCart(goods) {
+      const { productId, salePrice, picUrl, productName } = goods;
+      if (this.login) {
+        //用户已登录 将商品添加到用户信息中
+        const res = await this.$axios.post("api/addCart", {
+          userId: Storage.get("id"),
+          productId,
+
+          productNum: 1
+        });
+        // console.log(res.data.result.cartList);
+
+        //修改vuex中的cartList
+        this.ADDCART(res.data.result.cartList);
+      } else {
+        //用户未登录 提示用户需要登录
+        confirm("是否前往登陆页面")
+          ? this.$router.push({
+              path: "login",
+              query: { next: this.$route.fullPath }
+            })
+          : null;
+      }
     }
   }
 };
