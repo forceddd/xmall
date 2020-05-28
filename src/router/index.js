@@ -1,11 +1,17 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Index from '@/views/Index'
-import Home from '@/views/Home/index'
-import Goods from '@/views/Goods/index'
-import Thanks from '@/views/Thanks/index'
+import Home from '@/views/Home/Home'
+import Goods from '@/views/Goods/Goods'
+import Thanks from '@/views/Thanks/Thanks'
 Vue.use(VueRouter)
 
+
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location, onResolve, onReject) {
+  if (onResolve || onReject) return originalPush.call(this, location, onResolve, onReject)
+  return originalPush.call(this, location).catch(err => err)
+}
 const routes = [
   {
     path: '/',
@@ -28,12 +34,17 @@ const routes = [
         name: 'thanks',
         component: Thanks
       },
+      {
+        path: 'goodsDetail',
+        name: 'goodsDetail',
+        component: () => ('@/views/GoodsDetail/GoodsDetail')
+      }
     ]
   },
   {
     path: '/login',
     name: 'login',
-    component: () => import('@/views/Login/index')
+    component: () => import('@/views/Login/Login')
   }
 
 ]

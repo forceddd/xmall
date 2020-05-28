@@ -133,11 +133,11 @@
           <div class="nav-sub-bg"></div>
           <div class="nav-sub-wrapper">
             <div class="w">
-              <el-breadcrumb separator-class="el-icon-arrow-right">
+              <el-breadcrumb >
                 <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
                 <el-breadcrumb-item :to="{path:'/goods'}">全部</el-breadcrumb-item>
                 <el-breadcrumb-item :to="{path:'/goods?cid=1184'}">品牌周边</el-breadcrumb-item>
-                <el-breadcrumb-item :to="{path:'/thanks'}">捐赠名单</el-breadcrumb-item>
+                <el-breadcrumb-item :to="{path:'/thanks'}">捐赠</el-breadcrumb-item>
               </el-breadcrumb>
             </div>
           </div>
