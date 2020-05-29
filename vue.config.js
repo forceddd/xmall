@@ -1,4 +1,4 @@
-const fs = require('fs');
+/* const fs = require('fs');
 const cors = require('cors');
 const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser');
@@ -214,4 +214,4 @@ module.exports = {
 
         }
     }
-}
+} */

@@ -45,6 +45,8 @@ router.beforeEach((to, from, next) => {
 
 
 })
+//接口转移到node服务器上之后 设置公共url
+axios.defaults.baseURL = 'http://localhost:3000';
 //请求拦截器 为所有的请求添加token
 axios.interceptors.request.use(config => {
   const token = Storage.get('token')
